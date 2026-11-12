@@ -1,0 +1,7 @@
+(()=>{const frame=document.querySelector('#preview');if(!frame)return;let first=true,active='',pending=false;const key=path=>'portfolio2-preview-position:'+path;
+function page(){const loc=frame.contentWindow.location;return loc.pathname.split('/').pop()+loc.search+loc.hash}
+function save(){if(!active||pending)return;try{const win=frame.contentWindow;sessionStorage.setItem(key(active),JSON.stringify({x:win.scrollX,y:win.scrollY}));}catch{}}
+frame.addEventListener('load',()=>{try{const win=frame.contentWindow,doc=win.document,path=page();active=path;history.replaceState(null,'','desktop-preview.html?page='+encodeURIComponent(path));document.title=doc.title||'作品集2';const refresh=first;first=false;let position=null;if(refresh)try{position=JSON.parse(sessionStorage.getItem(key(path))||'null')}catch{}
+win.addEventListener('scroll',save,{passive:true});win.addEventListener('pagehide',save);win.addEventListener('hashchange',()=>{active=page();history.replaceState(null,'','desktop-preview.html?page='+encodeURIComponent(active));save()});
+if(position){pending=true;Promise.resolve(doc.fonts?.ready).then(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{const root=doc.documentElement,old=root.style.scrollBehavior;root.style.scrollBehavior='auto';win.scrollTo(Number(position.x)||0,Number(position.y)||0);root.style.scrollBehavior=old;pending=false;save()})))}else save();
+}catch{}});addEventListener('beforeunload',save);addEventListener('pagehide',save);})();

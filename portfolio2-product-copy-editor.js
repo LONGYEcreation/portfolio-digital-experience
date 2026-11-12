@@ -1,0 +1,22 @@
+(()=>{function start(){
+const key='portfolio2-product-case-copy-v1';let saved={};try{saved=JSON.parse(localStorage.getItem(key)||'{}')}catch{}
+const imported={"nitunxiang":{"title":"网站交互与原型探索","english":"Website Interaction Design & Prototyping"},"bananain":{"title":"品牌官网设计与构建","english":"Brand Website Design & AI Coding Construction"},"chatcut":{"title":"官网体验与优化洞察","english":"Website UX Analysis & Optimization Insights"}}, marker='portfolio2-product-copy-import-20261111-v1';
+let useImport=true;try{useImport=localStorage.getItem(marker)!=='done'}catch{}
+for(const [id,fields] of Object.entries(imported))saved[id]=useImport?{...(saved[id]||{}),...fields}:{...fields,...(saved[id]||{})};
+try{if(useImport){localStorage.setItem(key,JSON.stringify(saved));localStorage.setItem(marker,'done')}}catch{}
+const case02Body='以 ChatCut 网站为研究对象，结合真实产品体验与用户路径分析，从产品价值传达、功能理解、交互流程与用户预期管理等维度识别体验问题，并结合产品价值与业务目标，提出优化机会及待验证假设。';
+try{const revision='portfolio2-case02-body-20261112-v1';if(localStorage.getItem(revision)!=='done'){saved.chatcut={...(saved.chatcut||{}),body:case02Body};localStorage.setItem(key,JSON.stringify(saved));localStorage.setItem(revision,'done')}}catch{saved.chatcut={...(saved.chatcut||{}),body:case02Body}}
+if(typeof saved.chatcut?.body!=='string')saved.chatcut={...(saved.chatcut||{}),body:case02Body};
+const projects=[['bananain','CASE 01 泥吞象'],['chatcut','CASE 02 ChatCut 官网体验分析'],['nitunxiang','CASE 03 ChatCut 交互方案探索']];
+const fields=[['title','中文标题'],['english','英文标题'],['body','介绍正文']];
+const target=(id,field)=>field==='body'?document.querySelector('[data-short="'+id+'"] .case-short-edit'):document.querySelector('.project-choices button[data-project="'+id+'"] '+(field==='title'?'.case-name strong':'.case-name small'));
+function apply(){for(const [id]of projects)for(const [field]of fields){const el=target(id,field);if(el&&typeof saved[id]?.[field]==='string')el.textContent=saved[id][field]}}
+apply();
+const panel=document.createElement('aside');panel.id='p2CaseCopyEditor';panel.style.cssText='position:fixed;right:18px;top:110px;z-index:9999;width:310px;max-width:calc(100vw - 36px);max-height:70vh;overflow:auto;padding:16px;background:#fffffff5;color:#111;border:1px solid #aaa;border-radius:8px;font:13px/1.6 Arial';
+panel.innerHTML='<button id="p2Close" style="float:right">收起</button><b>CASE 01–03 内容编辑</b><p>自动保存在当前浏览器；完成后请导出备份。</p><select id="p2Project" style="width:100%"></select><div id="p2Fields"></div><button id="p2Export">导出备份</button><p id="p2Status"></p>';
+document.body.append(panel);
+const toggle=document.createElement('button');toggle.dataset.p2EditorToggle='true';toggle.textContent='编辑 CASE 内容';toggle.style.cssText='position:fixed;right:18px;bottom:18px;z-index:9999;padding:9px 16px;border-radius:22px';document.body.append(toggle);toggle.onclick=()=>panel.hidden=!panel.hidden;panel.querySelector('#p2Close').onclick=()=>panel.hidden=true;
+const select=panel.querySelector('select');for(const [id,label]of projects){const option=document.createElement('option');option.value=id;option.textContent=label;select.append(option)}
+function render(){const box=panel.querySelector('#p2Fields');box.replaceChildren();for(const [field,label]of fields){const l=document.createElement('label');l.textContent=label;const input=document.createElement('textarea');input.style.cssText='display:block;width:100%;box-sizing:border-box;min-height:70px;margin:5px 0 12px;color:#111;background:white;font:13px/1.5 Arial';input.value=target(select.value,field)?.innerText||'';input.oninput=()=>{const id=select.value;saved[id]={...(saved[id]||{}),[field]:input.value};const el=target(id,field);if(el){el.textContent=input.value;el.dispatchEvent(new Event('input',{bubbles:true}))};try{localStorage.setItem(key,JSON.stringify(saved));panel.querySelector('#p2Status').textContent='已自动保存'}catch{panel.querySelector('#p2Status').textContent='保存失败，请立即导出备份'}};l.append(input);box.append(l)}}
+select.onchange=render;render();panel.querySelector('#p2Export').onclick=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify({page:'portfolio2-product-cases',settings:saved},null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='portfolio2-product-cases.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start()})();
